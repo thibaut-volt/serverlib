@@ -9,27 +9,6 @@ task sourceJar(type: Jar) {
     classifier "sources"
 }
 
-def getLocalPropertyOrEnvVar(def propertyName) {
-    File propertiesFile = rootProject.file('local.properties')
-    Properties properties = new Properties()
-
-    logger.lifecycle('getLocalPropertyOrEnvVar.')
-
-    if (propertiesFile.exists()) {
-        properties.load(propertiesFile.newDataInputStream())
-        if (properties.getProperty(propertyName) != null) {
-            logger.lifecycle("getLocalPropertyOrEnvVar. name ${propertyName} = ${properties.getProperty(propertyName)}")
-            return properties.getProperty(propertyName)
-        } else {
-            return System.getenv(propertyName).toString()
-        }
-    } else if (System.hasProperty(propertyName)) {
-        return System.getenv(propertyName).toString()
-    } else {
-        return ""
-    }
-}
-
 publishing {
     repositories {
         maven {
@@ -65,5 +44,23 @@ publishing {
                 }
             }
         }
+    }
+}
+
+def getLocalPropertyOrEnvVar(def propertyName) {
+    File propertiesFile = rootProject.file('local.properties')
+    Properties properties = new Properties()
+
+    if (propertiesFile.exists()) {
+        properties.load(propertiesFile.newDataInputStream())
+        if (properties.getProperty(propertyName) != null) {
+            return properties.getProperty(propertyName)
+        } else {
+            return System.getenv(propertyName).toString()
+        }
+    } else if (System.hasProperty(propertyName)) {
+        return System.getenv(propertyName).toString()
+    } else {
+        return ""
     }
 }
